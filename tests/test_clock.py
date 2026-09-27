@@ -325,7 +325,7 @@ class ConverterTests(unittest.TestCase):
             "noon utc to Europe/Kyiv": ("Kyiv", "15:00 EEST"),
             "noon utc to UTC+5:30": ("UTC+5:30", "17:30 UTC+5:30"),
             "noon utc to GMT-3": ("UTC−3", "09:00 UTC−3"),
-            "noon utc to AoE": ("Anywhere on Earth", "00:00 AOE"),
+            "noon utc to AoE": ("Anywhere on Earth", "00:00 AoE"),
             "noon utc to Tokyo, Japan": ("Tokyo", "21:00 JST"),
         }
         for q, (name, arg) in cases.items():
@@ -348,6 +348,17 @@ class ConverterTests(unittest.TestCase):
         # a trailing separator while typing
         its = self.conv("3pm Tokyo in")
         self.assertTrue(its[0]["title"].endswith("Tokyo  15:00"))
+
+    def test_typing_states(self):
+        # audit 2: no dead ends while a query is half typed
+        self.assertEqual(self.conv("3pm P")[0]["title"], "Keep typing a place")
+        its = self.conv("3pm PST i")
+        self.assertTrue(its[0]["title"].endswith("US Pacific time  15:00"))
+        its = self.conv("3pm PST in T")
+        self.assertIn("Tokyo", " ".join(titles(its)))   # the saved cities meanwhile
+        its = self.conv("London NYC")
+        self.assertEqual([t.split("  ")[0] for t in titles(its)], ["🇬🇧 London", "🇺🇸 New York"])
+        self.assertEqual(its[1]["mods"]["alt"]["arg"], "London: 13:00 BST, Mon 28 Sep\nNew York: 08:00 EDT, Mon 28 Sep")
 
     def test_ambiguous_city(self):
         its = self.conv("3pm in Portland")
@@ -514,6 +525,16 @@ class PlannerTests(unittest.TestCase):
         self.assertIn("◐ 12:00 Riyadh", row["title"])
         its = items("when", "Riyadh Sunday", data=fresh("pl4"))
         self.assertIn("● 12:00 Riyadh", find(its, "◐ 10:00 London")["title"])
+
+    def test_output_size(self):
+        # audit 2: the grid in every row's ⌥ made the JSON ~100 KB with six cities
+        raw = run("when", "London NYC Tokyo Sydney Paris Berlin", data=fresh("pl6"))
+        self.assertLess(len(raw.encode()), 50000)
+        its = json.loads(raw)["items"]
+        self.assertEqual(len(its[0]["mods"]["alt"]["arg"].split("\n")), 24)
+        self.assertIs(its[1]["mods"]["alt"]["valid"], False)
+        its = items("when", "London NYC", data=fresh("pl6"))
+        self.assertEqual(len(its[5]["mods"]["alt"]["arg"].split("\n")), 24)
 
     def test_quarter_hours_and_favourites(self):
         its = items("when", "Kathmandu", data=fresh("pl5"))

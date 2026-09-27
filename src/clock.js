@@ -406,7 +406,6 @@ function daylight(p, ms) {
   if (h >= 19 && h < 20) return "sunset";
   return "night";
 }
-const DAYLIGHT_WORD = dict({ day: "day", night: "night", sunrise: "dawn", sunset: "dusk" });
 
 // ---------- data: cities and zones ----------
 
@@ -550,7 +549,7 @@ function abbrPlaces(word) {
   const places = list.map(([name, zone, hours, regions]) => {
     const fixed = hours == null ? null : Math.round(hours * 3600);
     const p = zone === null
-      ? { kind: "abbr", name, full: `${name} (${fmtUtc(fixed)})`, zone: null, fixed, fixedAbbr: up, cc: "" }
+      ? { kind: "abbr", name, full: `${name} (${fmtUtc(fixed)})`, zone: null, fixed, fixedAbbr: up === "AOE" ? "AoE" : up, cc: "" }
       : { kind: "abbr", name: `${name} time`, full: `${name} time`, zone, fixed: null, cc: zoneCountry(zone) };
     if (zone === "UTC") Object.assign(p, { name: up === "GMT" ? "GMT" : "UTC", full: name, zone: "UTC", fixed: 0, fixedAbbr: up === "GMT" ? "GMT" : "UTC" });
     p.abbr = up;
@@ -688,16 +687,26 @@ function resolvePhrase(phrase) {
     if (cand.length) return Object.assign(cand[0], { qualified: true });
   }
   // A state or province: its biggest city
-  const m = meta();
-  for (const [code, n] of Object.entries(m.admin1)) {
-    if (fold(n) === key) {
-      const [c, a] = code.split(".");
-      const re = new RegExp(`\\n[^\\t\\n]*\\t[^\\t\\n]*\\t${c}\\t${esc(a)}\\t`);
-      const hit = re.exec(cities());
-      if (hit) return Object.assign(rowPlace(hit.index + 1), { viaAdmin: n });
-    }
+  for (const code of adminCodes(key)) {
+    const [c, a] = code.split(".");
+    const re = new RegExp(`\\n[^\\t\\n]*\\t[^\\t\\n]*\\t${esc(c)}\\t${esc(a)}\\t`);
+    const hit = re.exec(cities());
+    if (hit) return Object.assign(rowPlace(hit.index + 1), { viaAdmin: meta().admin1[code] });
   }
   return null;
+}
+// State and province codes ("US.UT") by folded name, built once per run.
+let ADMIN_FOLD = null;
+function adminCodes(key) {
+  if (!ADMIN_FOLD) {
+    ADMIN_FOLD = new Map();
+    for (const [code, n] of Object.entries(meta().admin1)) {
+      const k = fold(n);
+      if (!ADMIN_FOLD.has(k)) ADMIN_FOLD.set(k, []);
+      ADMIN_FOLD.get(k).push(code);
+    }
+  }
+  return ADMIN_FOLD.get(key) || [];
 }
 // Other cities with the same name (Portland, Oregon / Portland, Maine) as alternatives.
 function withCityAlts(p, rest) {
@@ -901,7 +910,6 @@ function timeRow(p, ms, ref, o) {
     arg: text,
     icon: { path: `icons/${light}.png` },
     text: { copy: text, largetype: `${displayName(p)}\n${fmtTime(w)}\n${fmtDay(w)}` },
-    variables: { daylight: DAYLIGHT_WORD[light] },
     mods: {
       cmd: { arg: text, subtitle: `Paste “${text}”` },
       alt: { arg: o.all || text, subtitle: "Copy all cities" },
@@ -1215,6 +1223,8 @@ function clockFilter(query) {
   if (!q) return worldClock();
   const am = /^(add|remove|rm|edit|manage)(?:\s+(.*))?$/i.exec(q);
   if (am) return addMode(am[2] || "");
+  // "3pm PST i": a separator being typed
+  q = q.replace(/\s(i|t|int)$/i, "");
   let { left, right } = splitTargets(q);
   const t = extractTime(left);
   // "London to NYC tomorrow 9am": a date or time after the targets counts too
@@ -1232,8 +1242,17 @@ function clockFilter(query) {
   // Just a place: its time now, and similar places to add
   if (!t.any && (right === null || right === "")) {
     RERUN = liveRerun();
-    const rows = searchRows(t.rest || left, "search");
-    const p = resolvePhrase(t.rest || left);
+    const phrase = t.rest || left;
+    const p = resolvePhrase(phrase);
+    if (!p) {
+      // "London NYC": several places, each now
+      const seg = segmentPlaces(phrase);
+      if (seg.places.length >= 2 && !seg.unknown.length) {
+        const all = copyAll(seg.places, NOW);
+        return seg.places.map((x) => timeRow(x, NOW, LOCAL, { all }));
+      }
+    }
+    const rows = searchRows(phrase, "search");
     if (p && p.alts && p.alts.length && p.abbr) rows.splice(0, 0, info(`“${p.abbr}” has ${p.alts.length + 1} meanings`, "All of them are listed below", "choice"));
     return rows.length ? rows : [notFound(t.rest || left)];
   }
@@ -1251,6 +1270,7 @@ function clockFilter(query) {
       }
     }
     if (!src) src = resolveLoose(t.rest);
+    if (!src && fold(t.rest).length < 3) return [info("Keep typing a place", "A city, a country, a zone like PST or Europe/Paris, or UTC+5:30", "info", { valid: false })];
     if (!src) {
       // "Tokyo" alone with a separator typo, e.g. "Rio de Janeiro" read as a time: try the whole query
       const whole = right ? null : resolvePhrase(q);
@@ -1274,7 +1294,11 @@ function clockFilter(query) {
       // "Rio de Janeiro", "Stoke on Trent": maybe the separator was part of a name
       const whole = !t.any ? resolvePhrase(q) : null;
       if (whole) return searchRows(q, "search");
-      return [notFound(right)];
+      if (fold(right).length >= 3) return [notFound(right)];
+      // still typing the place after "in": show the saved cities meanwhile
+      unknown = [];
+      targets = sortPlaces(FAVS, ms);
+      if (placeId(src) !== placeId(LOCAL)) targets = [LOCAL].concat(targets);
     }
   } else {
     targets = sortPlaces(FAVS, ms);
@@ -1390,6 +1414,10 @@ function whenFilter(query) {
     });
   } else rows.push(info("No hour has anyone in working hours", "Try another day, like tomorrow or Monday", "partial"));
   const grid = slots.map((s) => slotText(s.ms)).join("\n");
+  // Every row can copy the grid, unless that would make Alfred's JSON large (many cities): then the top row does
+  const gridMod = grid.length * slots.length < 40000
+    ? { arg: grid, subtitle: "Copy the whole grid" }
+    : { arg: "", valid: false, subtitle: "Copy the whole grid from the first row" };
   let lastDay = null;
   for (const [si, s] of slots.entries()) {
     const cells = places.map((p, k) => `${MARK[s.st[k]]} ${fmtShort(wall(p, s.ms))} ${names[k]}`);
@@ -1406,7 +1434,7 @@ function whenFilter(query) {
       text: { copy: text, largetype: text.replace(/ \/ /g, "\n") },
       mods: {
         cmd: { arg: text, subtitle: "Paste this time for everyone" },
-        alt: { arg: grid, subtitle: "Copy the whole grid" },
+        alt: gridMod,
         ctrl: { arg: iso(LOCAL, s.ms), subtitle: `Copy as ISO 8601: ${iso(LOCAL, s.ms)}` },
       },
     });
