@@ -239,7 +239,7 @@ function wallToInstant(p, y, mo, d, h, mi) {
   const c = $.NSDateComponents.alloc.init;
   c.year = y; c.month = mo; c.day = d; c.hour = h; c.minute = mi; c.second = 0;
   const date = CAL.dateFromComponents(c);
-  const ms = Math.round(date.timeIntervalSince1970 * 1000);
+  let ms = Math.round(date.timeIntervalSince1970 * 1000);
   const w = wall(p, ms);
   const gap = w.h !== h || w.mi !== mi || w.d !== d;
   let second = null;
@@ -250,7 +250,10 @@ function wallToInstant(p, y, mo, d, h, mi) {
       if (o === w.off) continue;
       const other = asUtc - o * 1000;
       const ow = wall(p, other);
-      if (other !== ms && ow.h === h && ow.mi === mi && ow.d === d) second = Math.max(other, ms) === ms ? null : other;
+      if (other === ms || ow.h !== h || ow.mi !== mi || ow.d !== d) continue;
+      // the time happens twice: report the earlier one first, whichever NSCalendar returned
+      second = Math.max(other, ms);
+      ms = Math.min(other, ms);
     }
   }
   return { ms, gap, second };
@@ -720,8 +723,7 @@ function segmentPlaces(text) {
     if (c + 1 < chunks.length) {
       const joined = resolvePhrase(`${chunks[c]}, ${chunks[c + 1]}`);
       if (joined && joined.qualified) {
-        joined.token = `${chunks[c]}, ${chunks[c + 1]}`;
-        places.push(joined);
+        places.push(Object.assign({}, joined, { token: `${chunks[c]}, ${chunks[c + 1]}` }));
         c++;
         continue;
       }
@@ -740,7 +742,8 @@ function segmentPlaces(text) {
         if (found) j = words.length;
       }
       if (!found) j = i + 1;
-      if (found) places.push(Object.assign(found, { token: words.slice(i, j).join(" ") }));
+      // a copy: `found` may be a saved city or the local place
+      if (found) places.push(Object.assign({}, found, { token: words.slice(i, j).join(" ") }));
       else unknown.push(words[i]);
       i = j;
     }
@@ -938,46 +941,45 @@ function extractTime(input) {
     });
   };
   // ISO 8601: 2026-10-05, 2026-10-05T14:00, 2026-10-05 14:00:00Z, …+05:30
-  take(/(?<=\s)(\d{4})-(\d{1,2})-(\d{1,2})(?:[tT\s](\d{1,2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?\s*(Z|[+\-]\d{2}:?\d{2})?)?(?=\s)/, (m, y, mo, d, h, mi, sec, z) => {
+  take(/\s(\d{4})-(\d{1,2})-(\d{1,2})(?:[tT\s](\d{1,2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?\s*(Z|[+\-]\d{2}:?\d{2})?)?(?=\s)/, (m, y, mo, d, h, mi, sec, z) => {
     t.date = { y: +y, mo: +mo, d: +d };
     if (h != null) t.time = { h: +h, mi: +mi };
     if (z) t.isoOffset = z.toUpperCase() === "Z" ? 0 : (z[0] === "-" ? -1 : 1) * (+z.slice(1, 3) * 3600 + +z.slice(-2) * 60);
   });
   // in 2 hours, +90m, -1d, 3 days ago
-  take(/(?<=\s)(?:(in)\s+)?([+\-])?(\d+(?:\.\d+)?)\s*(hours?|hrs?|h|minutes?|mins?|m|days?|d|weeks?|wks?|w)(\s+ago)?(?=\s)/i, (m, inw, sign, n, unit, ago) => {
+  take(/\s(?:(in)\s+)?([+\-])?(\d+(?:\.\d+)?)\s*(hours?|hrs?|h|minutes?|mins?|m|days?|d|weeks?|wks?|w)(\s+ago)?(?=\s)/i, (m, inw, sign, n, unit, ago) => {
     if (!inw && !sign && !ago) return false;
     t.delta = (t.delta || 0) + (sign === "-" || ago ? -1 : 1) * parseFloat(n) * UNITS[unit.toLowerCase()];
   });
-  take(/(?<=\s)(now|right now)(?=\s)/i, () => {
+  take(/\s(now|right now)(?=\s)/i, () => {
     t.now = true;
   });
-  take(/(?<=\s)(today|tonight|tomorrow|tmrw|tmr|tomorow|yesterday)(?=\s)/i, (m, w) => {
+  take(/\s(today|tonight|tomorrow|tmrw|tmr|tomorow|yesterday)(?=\s)/i, (m, w) => {
     const k = w.toLowerCase();
-    t.rel = k === "yesterday" ? -1 : k.startsWith("to") && k !== "tomorrow" && k !== "tomorow" ? 0 : 1;
-    if (k === "today" || k === "tonight") t.rel = 0;
+    t.rel = k === "yesterday" ? -1 : k === "today" || k === "tonight" ? 0 : 1;
     if (k === "tonight") t.tonight = true;
   });
   // 5 Oct, 5th October 2026, Oct 5, October 5th, 2026
-  take(new RegExp(`(?<=\\s)(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?${MONTH_RE}\\.?(?:,?\\s+(\\d{4}))?(?=\\s)`, "i"), (m, d, mon, y) => {
+  take(new RegExp(`\\s(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?${MONTH_RE}\\.?(?:,?\\s+(\\d{4}))?(?=\\s)`, "i"), (m, d, mon, y) => {
     t.date = { mo: MONTHS.indexOf(mon.slice(0, 3).toLowerCase()) + 1, d: +d, y: y ? +y : null };
   });
-  take(new RegExp(`(?<=\\s)${MONTH_RE}\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s+(\\d{4}))?(?=[\\s,])`, "i"), (m, mon, d, y) => {
+  take(new RegExp(`\\s${MONTH_RE}\\.?\\s+(\\d{1,2})(?:st|nd|rd|th)?(?:,?\\s+(\\d{4}))?(?=[\\s,])`, "i"), (m, mon, d, y) => {
     t.date = { mo: MONTHS.indexOf(mon.slice(0, 3).toLowerCase()) + 1, d: +d, y: y ? +y : null };
   });
-  take(/(?<=\s)(next\s+)?(sun(?:day)?|mon(?:day)?|tue(?:s(?:day)?)?|wed(?:s|nesday)?|thu(?:r(?:s(?:day)?)?)?|fri(?:day)?|sat(?:urday)?)(?=\s)/i, (m, next, w) => {
+  take(/\s(next\s+)?(sun(?:day)?|mon(?:day)?|tue(?:s(?:day)?)?|wed(?:s|nesday)?|thu(?:r(?:s(?:day)?)?)?|fri(?:day)?|sat(?:urday)?)(?=\s)/i, (m, next, w) => {
     const k = w.toLowerCase();
     if (!(k in WEEKDAYS)) return false;
     t.weekday = { dow: WEEKDAYS[k], next: !!next };
   });
   // 10/5, 10/5/2026 (in the order of the Mac's region), 5.10. or 5.10.2026 (always day first)
-  take(/(?<=\s)(\d{1,2})\/(\d{1,2})(?:\/(\d{2}|\d{4}))?(?=\s)/, (m, a, b, y) => {
+  take(/\s(\d{1,2})\/(\d{1,2})(?:\/(\d{2}|\d{4}))?(?=\s)/, (m, a, b, y) => {
     const [mo, d] = MDY ? [+a, +b] : [+b, +a];
     t.date = { mo, d, y: y ? (y.length === 2 ? 2000 + +y : +y) : null };
   });
-  take(/(?<=\s)(\d{1,2})\.(\d{1,2})\.(\d{4})?(?=\s)/, (m, d, mo, y) => {
+  take(/\s(\d{1,2})\.(\d{1,2})\.(\d{4})?(?=\s)/, (m, d, mo, y) => {
     t.date = { mo: +mo, d: +d, y: y ? +y : null };
   });
-  take(/(?<=\s)(noon|midday|midnight)(?=\s)/i, (m, w) => {
+  take(/\s(noon|midday|midnight)(?=\s)/i, (m, w) => {
     t.time = { h: w.toLowerCase() === "midnight" ? 0 : 12, mi: 0 };
   });
   // 3pm, 3 pm, 3:30pm, 3.30 p.m., 15:30, 9h30, 9h
@@ -987,24 +989,24 @@ function extractTime(input) {
     const pm = ap[0].toLowerCase() === "p";
     return (h % 12) + (pm ? 12 : 0);
   };
-  take(/(?<=\s)(\d{1,2})[:.h](\d{2})(?::\d{2})?\s*(a\.?m\.?|p\.?m\.?|a|p)?(?=\s)/i, (m, h, mi, ap) => {
+  take(/\s(\d{1,2})[:.h](\d{2})(?::\d{2})?\s*(a\.?m\.?|p\.?m\.?|a|p)?(?=\s)/i, (m, h, mi, ap) => {
     if (t.time) return false;
     const hh = ampm(+h, ap);
     if (hh < 0 || hh > 23 || +mi > 59) t.errors.push(m.trim());
     else t.time = { h: hh, mi: +mi };
   });
-  take(/(?<=\s)(\d{1,2})\s*(a\.?m\.?|p\.?m\.?)(?=\s)|(?<=\s)(\d{1,2})(a|p)(?=\s)/i, (m, h1, ap1, h2, ap2) => {
+  take(/\s(\d{1,2})\s*(a\.?m\.?|p\.?m\.?)(?=\s)|\s(\d{1,2})(a|p)(?=\s)/i, (m, h1, ap1, h2, ap2) => {
     if (t.time) return false;
     const hh = ampm(+(h1 || h2), ap1 || ap2);
     if (hh < 0) t.errors.push(m.trim());
     else t.time = { h: hh, mi: 0 };
   });
-  take(/(?<=\s)(\d{1,2})h(?=\s)/i, (m, h) => {
+  take(/\s(\d{1,2})h(?=\s)/i, (m, h) => {
     if (t.time || +h > 23) return false;
     t.time = { h: +h, mi: 0 };
   });
   // 1430 or 930 (no colon), then a bare hour ("9 London")
-  take(/(?<=\s)(\d{3,4})(?=\s)/, (m, n) => {
+  take(/\s(\d{3,4})(?=\s)/, (m, n) => {
     if (t.time) return false;
     const h = Math.floor(+n / 100), mi = +n % 100;
     if (h > 23 || mi > 59) {
@@ -1013,14 +1015,14 @@ function extractTime(input) {
     }
     t.time = { h, mi };
   });
-  take(/(?<=\s)(\d{1,2})(?=\s)/, (m, n) => {
+  take(/\s(\d{1,2})(?=\s)/, (m, n) => {
     if (t.time || +n > 23) return false;
     t.time = { h: +n, mi: 0 };
   });
   if (t.tonight && !t.time) t.time = { h: 20, mi: 0 };
   t.explicit = !!(t.time || t.date || t.weekday || t.rel);
   t.any = t.explicit || t.now || t.delta != null;
-  t.rest = s.replace(/(?<=\s)(at|on|from|@)(?=\s)/gi, " ").replace(/\s+/g, " ").trim();
+  t.rest = s.replace(/\s(at|on|from|@)(?=\s)/gi, " ").replace(/\s+/g, " ").trim();
   return t;
 }
 
@@ -1143,7 +1145,7 @@ function searchRows(phrase, mode, label) {
     push(exact);
     for (const a of exact.alts || []) push(a);
     // "IST": its meanings are the answer, not Istanbul and Istres
-    if (exact.abbr || exact.kind === "offset") return places.map((p) => searchRow(p, mode, label));
+    if (exact.abbr || exact.kind === "offset") return rowsFor(places, mode, label);
   }
   for (const f of FAVS) if (key && (fold(displayName(f)).startsWith(key) || fold(f.name).startsWith(key))) push(f);
   if (key.length >= 1) {
@@ -1154,11 +1156,15 @@ function searchRows(phrase, mode, label) {
     const cc = countryByName(key);
     if (cc) for (const p of countryCities(cc, 6)) push(p);
   }
-  return places.slice(0, 15).map((p) => searchRow(p, mode, label));
+  return rowsFor(places.slice(0, 15), mode, label);
 }
-function searchRow(p, mode, label) {
+function rowsFor(places, mode, label) {
+  const all = copyAll(places, NOW);
+  return places.map((p) => searchRow(p, mode, label, all));
+}
+function searchRow(p, mode, label, all) {
   {
-    const row = timeRow(p, NOW, LOCAL, { extra: p.full && p.full !== p.name ? p.full : "" });
+    const row = timeRow(p, NOW, LOCAL, { all, extra: p.full && p.full !== p.name ? p.full : "" });
     const fav = isFav(p);
     if (mode === "add") {
       if (fav && label !== null && label !== undefined) {
@@ -1285,7 +1291,6 @@ function clockFilter(query) {
   const rows = [];
   const srcNote = relNow(ms);
   rows.push(timeRow(src, ms, src, { all, source: srcNote, then: true }));
-  if (t.explicit) rows[0].subtitle = rows[0].subtitle.replace(/^([^·]*\(([^)]*)\))?/, (m) => m);
   const sn = strictNote(src, ms, q);
   if (sn) rows.push(sn);
   rows.push(...r.notes);

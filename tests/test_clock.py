@@ -407,6 +407,15 @@ class ConverterTests(unittest.TestCase):
         self.assertIn("Rio de Janeiro, Brazil", its[0]["subtitle"])
         add = its[0]["mods"]["shift"]
         self.assertIn('"op":"add"', add["arg"])
+        # audit 1: ⌥↩ on a lookup copies every listed place, as its subtitle says
+        its = self.conv("IST")
+        self.assertEqual(len(its[1]["mods"]["alt"]["arg"].split("\n")), 3)
+
+    def test_tonight_and_today(self):
+        its = self.conv("tonight in Tokyo")
+        self.assertEqual(its[0]["arg"], "20:00 BST, Mon 28 Sep")
+        its = self.conv("today in Tokyo")
+        self.assertEqual(find(its, "Tokyo")["arg"], "21:00 JST, Mon 28 Sep")
 
 
 class AddTests(unittest.TestCase):
@@ -574,6 +583,12 @@ class BuildTests(unittest.TestCase):
         strings = re.findall(r'`[^`]*`|"(?:[^"\\\n]|\\.)*"', js)
         bad = [x for x in strings if re.search(r"[A-Za-z]'[a-z]", x)]
         self.assertEqual(bad, [])
+
+    def test_macos13_syntax(self):
+        # audit 1: regex lookbehind needs JavaScriptCore from macOS 13.3; the workflow supports 13.0
+        js = open(os.path.join(SRC, "clock.js"), encoding="utf-8").read()
+        self.assertNotIn("(?<=", js)
+        self.assertNotIn("(?<!", js)
 
     def test_fold_matches_tool(self):
         sys.path.insert(0, os.path.join(ROOT, "tools"))
