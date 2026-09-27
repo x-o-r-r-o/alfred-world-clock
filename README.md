@@ -31,7 +31,7 @@ When an abbreviation has several meanings, like `CST`, `IST` or `BST`, the most 
 
 ### Adding cities
 
-Manage your cities via `clock add`. Type a name and press <kbd>↩</kbd> to add it, or add ` as Name` to give it a label, like `clock add Chatham as Kiwi office`. Press <kbd>↩</kbd> on a city already in your world clock to remove it.
+Manage your cities via the `clock` keyword followed by `add`. Type a name and press <kbd>↩</kbd> to add it, or add ` as Name` to give it a label, like `clock add Chatham as Kiwi office`. Press <kbd>↩</kbd> on a city already in your world clock to remove it.
 
 ![Adding a city](images/add.png)
 
@@ -43,7 +43,7 @@ Find a time that suits several cities via the `when` keyword, like `when London 
 
 * <kbd>↩</kbd> Copy that hour in every city.
 * <kbd>⌘</kbd><kbd>↩</kbd> Paste it into the frontmost app.
-* <kbd>⌥</kbd><kbd>↩</kbd> Copy the whole grid.
+* <kbd>⌥</kbd><kbd>↩</kbd> Copy the whole grid (from the first row when you plan for many cities).
 * <kbd>⌃</kbd><kbd>↩</kbd> Copy the hour as an ISO 8601 timestamp.
 
 Alternatively, convert a selected time like “3pm EST” via the Universal Action.

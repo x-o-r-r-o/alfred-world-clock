@@ -553,6 +553,7 @@ function abbrPlaces(word) {
       : { kind: "abbr", name: `${name} time`, full: `${name} time`, zone, fixed: null, cc: zoneCountry(zone) };
     if (zone === "UTC") Object.assign(p, { name: up === "GMT" ? "GMT" : "UTC", full: name, zone: "UTC", fixed: 0, fixedAbbr: up === "GMT" ? "GMT" : "UTC" });
     p.abbr = up;
+    p.noFlag = true; // CET isn't French, even though Paris stands in for it
     p.strict = fixed;
     p.regions = regions || "";
     const zt = zone && meta().zonetab[zone];
@@ -905,7 +906,7 @@ function timeRow(p, ms, ref, o) {
   const text = copyText(p, ms);
   const fav = isFav(p);
   const it = {
-    title: `${flagOf(p.cc)}${name}  ${fmtTime(w)}${dayTag}`,
+    title: `${p.noFlag ? "" : flagOf(p.cc)}${name}  ${fmtTime(w)}${dayTag}`,
     subtitle: parts.join(" · "),
     arg: text,
     icon: { path: `icons/${light}.png` },

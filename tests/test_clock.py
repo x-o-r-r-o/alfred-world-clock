@@ -207,7 +207,8 @@ class ConverterTests(unittest.TestCase):
         its = self.conv("now in Sydney")
         self.assertEqual(find(its, "Sydney")["arg"], "22:00 AEST, Mon 28 Sep")
         its = self.conv("14:30 CET")
-        self.assertTrue(its[0]["title"].endswith("Central European time  14:30"))
+        # audit 3: no French flag on CET (Paris only stands in for the zone)
+        self.assertEqual(its[0]["title"], "Central European time  14:30")
         self.assertEqual(find(its, "London")["arg"], "13:30 BST, Mon 28 Sep")
         self.assertEqual(find(its, "Tokyo")["arg"], "21:30 JST, Mon 28 Sep")
 
