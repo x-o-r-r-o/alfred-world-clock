@@ -1,0 +1,17 @@
+{
+  "icon": ["globe.europe.africa.fill", "#0EA5E9"],
+  "day": ["sun.max.fill", "#F59E0B"],
+  "sunrise": ["sunrise.fill", "#F97316"],
+  "sunset": ["sunset.fill", "#DB2777"],
+  "night": ["moon.stars.fill", "#4338CA"],
+  "work": ["briefcase.fill", "#16A34A"],
+  "partial": ["circle.lefthalf.filled", "#D97706"],
+  "off": ["moon.zzz.fill", "#64748B"],
+  "best": ["star.fill", "#16A34A"],
+  "add": ["plus.circle.fill", "#0EA5E9"],
+  "remove": ["minus.circle.fill", "#DC2626"],
+  "info": ["info.circle.fill", "#64748B"],
+  "warn": ["exclamationmark.triangle.fill", "#D97706"],
+  "choice": ["questionmark.circle.fill", "#7C3AED"],
+  "error": ["exclamationmark.triangle.fill", "#DC2626"]
+}

@@ -1,0 +1,723 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>io.github.x-o-r-r-o.worldclock</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>0AC90C2A-5BFB-52A7-B044-9304F8727B2D</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>91920400-12F9-5A4C-B650-0EDC619ED6E0</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>174ECFEC-2603-554F-9AEC-775F5ED9151F</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>425CE488-3668-5262-A472-7305460D755F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>B03A37EA-672C-5254-AD70-45161CF324B8</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>425CE488-3668-5262-A472-7305460D755F</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>425CE488-3668-5262-A472-7305460D755F</string>
+				<key>modifiers</key>
+				<integer>262144</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>8AF77B0D-B6BE-5DC9-A835-564560DB3768</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>66EC909B-2DE1-59D6-B00D-45E28E486396</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>sourceoutputuid</key>
+				<string>AACC1BF9-86AD-5143-A3D3-B3B681033321</string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>425CE488-3668-5262-A472-7305460D755F</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>91920400-12F9-5A4C-B650-0EDC619ED6E0</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>8AF77B0D-B6BE-5DC9-A835-564560DB3768</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>B03A37EA-672C-5254-AD70-45161CF324B8</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>425CE488-3668-5262-A472-7305460D755F</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>425CE488-3668-5262-A472-7305460D755F</string>
+				<key>modifiers</key>
+				<integer>262144</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>66EC909B-2DE1-59D6-B00D-45E28E486396</string>
+				<key>modifiers</key>
+				<integer>131072</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>x-o-r-r-o</string>
+	<key>description</key>
+	<string>Your cities’ local times, a natural-language time zone converter and a meeting planner</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>World Clock</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>{var:keyword_clock}</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>…</string>
+				<key>script</key>
+				<string>osascript -l JavaScript ./clock.js clock "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>skipuniversalaction</key>
+				<true/>
+				<key>subtext</key>
+				<string>Your cities, or convert a time: 3pm PST in Tokyo</string>
+				<key>title</key>
+				<string>World Clock</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>91920400-12F9-5A4C-B650-0EDC619ED6E0</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>{var:keyword_when}</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemode</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>…</string>
+				<key>script</key>
+				<string>osascript -l JavaScript ./clock.js when "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>skipuniversalaction</key>
+				<true/>
+				<key>subtext</key>
+				<string>Working hours across cities: London NYC Tokyo</string>
+				<key>title</key>
+				<string>Meeting Planner</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>174ECFEC-2603-554F-9AEC-775F5ED9151F</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>acceptsfiles</key>
+				<false/>
+				<key>acceptsmulti</key>
+				<integer>0</integer>
+				<key>acceptstext</key>
+				<true/>
+				<key>acceptsurls</key>
+				<false/>
+				<key>name</key>
+				<string>Convert Time with World Clock</string>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.universalaction</string>
+			<key>uid</key>
+			<string>0AC90C2A-5BFB-52A7-B044-9304F8727B2D</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>conditions</key>
+				<array>
+					<dict>
+						<key>inputstring</key>
+						<string></string>
+						<key>matchcasesensitive</key>
+						<false/>
+						<key>matchmode</key>
+						<integer>4</integer>
+						<key>matchstring</key>
+						<string>^wcfav:</string>
+						<key>outputlabel</key>
+						<string>Add or remove a city</string>
+						<key>uid</key>
+						<string>AACC1BF9-86AD-5143-A3D3-B3B681033321</string>
+					</dict>
+				</array>
+				<key>elselabel</key>
+				<string>Copy</string>
+				<key>hideelse</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.utility.conditional</string>
+			<key>uid</key>
+			<string>8AF77B0D-B6BE-5DC9-A835-564560DB3768</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>osascript -l JavaScript ./clock.js act "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>66EC909B-2DE1-59D6-B00D-45E28E486396</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<true/>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>425CE488-3668-5262-A472-7305460D755F</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<true/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<true/>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>B03A37EA-672C-5254-AD70-45161CF324B8</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string>## Usage
+
+See the local time in your cities via the `clock` keyword. Each city shows its day, how far it is ahead of or behind you, its time zone and whether the sun is up there. The clock updates while Alfred is open.
+
+* &lt;kbd&gt;↩&lt;/kbd&gt; Copy the city’s time, like `10:05 PM JST, Tue 29 Sep`.
+* &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; Paste the time into the frontmost app.
+* &lt;kbd&gt;⌥&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; Copy the times of all cities.
+* &lt;kbd&gt;⌃&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; Copy the time as an ISO 8601 timestamp.
+* &lt;kbd&gt;⇧&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; Add the city to the world clock, or remove it.
+* &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;L&lt;/kbd&gt; Show the time in Large Type.
+
+Type a city, country, state, time zone abbreviation (`CET`), time zone name (`America/Chicago`) or UTC offset (`UTC+5:30`) after the keyword to see its time. Over 34,000 cities are included.
+
+### Converting times
+
+Type a time with a place to convert it via the `clock` keyword, like `3pm PST in Tokyo`, `tomorrow 9:00 London to NYC`, `noon here in Berlin`, `now in Sydney`, `5pm PT Shanghai Zurich` or just `14:30 CET` to see it in all your cities. Times can be written as `3pm`, `15:30`, `1530`, `noon` or `midnight`, dates as `tomorrow`, `Friday`, `5 Oct`, `Oct 5` or `2026-10-05`, and `in 2 hours` works too.
+
+When an abbreviation has several meanings, like `CST`, `IST` or `BST`, the most likely one for your region is used and the others are offered below: press &lt;kbd&gt;↩&lt;/kbd&gt; on one to switch. When a typed time falls in a daylight saving change (it is skipped or happens twice), or an abbreviation like `EST` doesn’t match the season, a note explains what is shown.
+
+### Adding cities
+
+Manage your cities via `clock add`. Type a name and press &lt;kbd&gt;↩&lt;/kbd&gt; to add it, or add ` as Name` to give it a label, like `clock add Chatham as Kiwi office`. Press &lt;kbd&gt;↩&lt;/kbd&gt; on a city already in your world clock to remove it.
+
+### Meeting planner
+
+Find a time that suits several cities via the `when` keyword, like `when London NYC Tokyo`. Each row is an hour in your time zone, with ● for working hours, ◐ for awake but outside working hours or at the weekend, and ○ for night. The best hours are starred at the top. Add a day to plan it, like `when London NYC Tokyo tomorrow`. Without cities, it uses your world clock.
+
+* &lt;kbd&gt;↩&lt;/kbd&gt; Copy that hour in every city.
+* &lt;kbd&gt;⌘&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; Paste it into the frontmost app.
+* &lt;kbd&gt;⌥&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; Copy the whole grid.
+* &lt;kbd&gt;⌃&lt;/kbd&gt;&lt;kbd&gt;↩&lt;/kbd&gt; Copy the hour as an ISO 8601 timestamp.
+
+Alternatively, convert a selected time like “3pm EST” via the Universal Action.
+
+Keywords, the time and date format, the order of cities, working hours and flags can be changed in the Workflow’s Configuration.
+
+City data comes from [GeoNames](https://www.geonames.org), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+</string>
+	<key>uidata</key>
+	<dict>
+		<key>0AC90C2A-5BFB-52A7-B044-9304F8727B2D</key>
+		<dict>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>150</integer>
+		</dict>
+		<key>174ECFEC-2603-554F-9AEC-775F5ED9151F</key>
+		<dict>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>20</integer>
+		</dict>
+		<key>425CE488-3668-5262-A472-7305460D755F</key>
+		<dict>
+			<key>xpos</key>
+			<integer>690</integer>
+			<key>ypos</key>
+			<integer>150</integer>
+		</dict>
+		<key>66EC909B-2DE1-59D6-B00D-45E28E486396</key>
+		<dict>
+			<key>note</key>
+			<string>Adds, removes or renames a city, then reopens the world clock</string>
+			<key>xpos</key>
+			<integer>690</integer>
+			<key>ypos</key>
+			<integer>20</integer>
+		</dict>
+		<key>8AF77B0D-B6BE-5DC9-A835-564560DB3768</key>
+		<dict>
+			<key>note</key>
+			<string>Rows in the add screen carry a wcfav: action</string>
+			<key>xpos</key>
+			<integer>470</integer>
+			<key>ypos</key>
+			<integer>20</integer>
+		</dict>
+		<key>91920400-12F9-5A4C-B650-0EDC619ED6E0</key>
+		<dict>
+			<key>xpos</key>
+			<integer>250</integer>
+			<key>ypos</key>
+			<integer>20</integer>
+		</dict>
+		<key>B03A37EA-672C-5254-AD70-45161CF324B8</key>
+		<dict>
+			<key>xpos</key>
+			<integer>470</integer>
+			<key>ypos</key>
+			<integer>150</integer>
+		</dict>
+	</dict>
+	<key>userconfigurationconfig</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>clock</string>
+				<key>placeholder</key>
+				<string>clock</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>World clock and time converter</string>
+			<key>label</key>
+			<string>Keywords</string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>keyword_clock</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>when</string>
+				<key>placeholder</key>
+				<string>when</string>
+				<key>required</key>
+				<true/>
+				<key>trim</key>
+				<true/>
+			</dict>
+			<key>description</key>
+			<string>Meeting planner</string>
+			<key>label</key>
+			<string></string>
+			<key>type</key>
+			<string>textfield</string>
+			<key>variable</key>
+			<string>keyword_when</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>system</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Same as macOS</string>
+						<string>system</string>
+					</array>
+					<array>
+						<string>24-hour</string>
+						<string>24</string>
+					</array>
+					<array>
+						<string>12-hour</string>
+						<string>12</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Time format</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>time_format</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>system</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>Same as macOS</string>
+						<string>system</string>
+					</array>
+					<array>
+						<string>Tue 29 Sep</string>
+						<string>dmy</string>
+					</array>
+					<array>
+						<string>Tue Sep 29</string>
+						<string>mdy</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>Order of the day and month in dates, and in typed dates like 5/10</string>
+			<key>label</key>
+			<string>Date format</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>date_format</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>offset</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>By time zone offset</string>
+						<string>offset</string>
+					</array>
+					<array>
+						<string>In the order added</string>
+						<string>added</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>Order of the cities in the world clock</string>
+			<key>label</key>
+			<string>Cities</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>sort_order</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>9</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>6:00</string>
+						<string>6</string>
+					</array>
+					<array>
+						<string>7:00</string>
+						<string>7</string>
+					</array>
+					<array>
+						<string>8:00</string>
+						<string>8</string>
+					</array>
+					<array>
+						<string>9:00</string>
+						<string>9</string>
+					</array>
+					<array>
+						<string>10:00</string>
+						<string>10</string>
+					</array>
+					<array>
+						<string>11:00</string>
+						<string>11</string>
+					</array>
+					<array>
+						<string>12:00</string>
+						<string>12</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>Start, for the meeting planner (weekends are skipped)</string>
+			<key>label</key>
+			<string>Working hours</string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>work_start</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<string>17</string>
+				<key>pairs</key>
+				<array>
+					<array>
+						<string>14:00</string>
+						<string>14</string>
+					</array>
+					<array>
+						<string>15:00</string>
+						<string>15</string>
+					</array>
+					<array>
+						<string>16:00</string>
+						<string>16</string>
+					</array>
+					<array>
+						<string>17:00</string>
+						<string>17</string>
+					</array>
+					<array>
+						<string>18:00</string>
+						<string>18</string>
+					</array>
+					<array>
+						<string>19:00</string>
+						<string>19</string>
+					</array>
+					<array>
+						<string>20:00</string>
+						<string>20</string>
+					</array>
+					<array>
+						<string>21:00</string>
+						<string>21</string>
+					</array>
+				</array>
+			</dict>
+			<key>description</key>
+			<string>End</string>
+			<key>label</key>
+			<string></string>
+			<key>type</key>
+			<string>popupbutton</string>
+			<key>variable</key>
+			<string>work_end</string>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>default</key>
+				<true/>
+				<key>required</key>
+				<false/>
+				<key>text</key>
+				<string>Show country flags</string>
+			</dict>
+			<key>description</key>
+			<string></string>
+			<key>label</key>
+			<string>Flags</string>
+			<key>type</key>
+			<string>checkbox</string>
+			<key>variable</key>
+			<string>show_flags</string>
+		</dict>
+	</array>
+	<key>variables</key>
+	<dict/>
+	<key>variablesdontexport</key>
+	<array/>
+	<key>version</key>
+	<string>1.0.0</string>
+	<key>webaddress</key>
+	<string>https://github.com/x-o-r-r-o/alfred-world-clock</string>
+</dict>
+</plist>

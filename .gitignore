@@ -1,0 +1,6 @@
+dist/
+.DS_Store
+*.alfredworkflow
+prefs.plist
+__pycache__/
+.geonames/

@@ -1,0 +1,307 @@
+{
+  "bundleid": "io.github.x-o-r-r-o.worldclock",
+  "name": "World Clock",
+  "description": "Your cities’ local times, a natural-language time zone converter and a meeting planner",
+  "category": "Productivity",
+  "createdby": "x-o-r-r-o",
+  "webaddress": "https://github.com/x-o-r-r-o/alfred-world-clock",
+  "version": "1.0.0",
+  "variablesdontexport": [],
+  "config": [
+    {
+      "type": "textfield",
+      "variable": "keyword_clock",
+      "label": "Keywords",
+      "description": "World clock and time converter",
+      "config": {
+        "default": "clock",
+        "placeholder": "clock",
+        "required": true,
+        "trim": true
+      }
+    },
+    {
+      "type": "textfield",
+      "variable": "keyword_when",
+      "label": "",
+      "description": "Meeting planner",
+      "config": {
+        "default": "when",
+        "placeholder": "when",
+        "required": true,
+        "trim": true
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "time_format",
+      "label": "Time format",
+      "description": "",
+      "config": {
+        "default": "system",
+        "pairs": [
+          [
+            "Same as macOS",
+            "system"
+          ],
+          [
+            "24-hour",
+            "24"
+          ],
+          [
+            "12-hour",
+            "12"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "date_format",
+      "label": "Date format",
+      "description": "Order of the day and month in dates, and in typed dates like 5/10",
+      "config": {
+        "default": "system",
+        "pairs": [
+          [
+            "Same as macOS",
+            "system"
+          ],
+          [
+            "Tue 29 Sep",
+            "dmy"
+          ],
+          [
+            "Tue Sep 29",
+            "mdy"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "sort_order",
+      "label": "Cities",
+      "description": "Order of the cities in the world clock",
+      "config": {
+        "default": "offset",
+        "pairs": [
+          [
+            "By time zone offset",
+            "offset"
+          ],
+          [
+            "In the order added",
+            "added"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "work_start",
+      "label": "Working hours",
+      "description": "Start, for the meeting planner (weekends are skipped)",
+      "config": {
+        "default": "9",
+        "pairs": [
+          [
+            "6:00",
+            "6"
+          ],
+          [
+            "7:00",
+            "7"
+          ],
+          [
+            "8:00",
+            "8"
+          ],
+          [
+            "9:00",
+            "9"
+          ],
+          [
+            "10:00",
+            "10"
+          ],
+          [
+            "11:00",
+            "11"
+          ],
+          [
+            "12:00",
+            "12"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "work_end",
+      "label": "",
+      "description": "End",
+      "config": {
+        "default": "17",
+        "pairs": [
+          [
+            "14:00",
+            "14"
+          ],
+          [
+            "15:00",
+            "15"
+          ],
+          [
+            "16:00",
+            "16"
+          ],
+          [
+            "17:00",
+            "17"
+          ],
+          [
+            "18:00",
+            "18"
+          ],
+          [
+            "19:00",
+            "19"
+          ],
+          [
+            "20:00",
+            "20"
+          ],
+          [
+            "21:00",
+            "21"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "checkbox",
+      "variable": "show_flags",
+      "label": "Flags",
+      "description": "",
+      "config": {
+        "default": true,
+        "required": false,
+        "text": "Show country flags"
+      }
+    }
+  ],
+  "objects": [
+    {
+      "id": "sf_clock",
+      "type": "scriptfilter",
+      "keyword": "{var:keyword_clock}",
+      "title": "World Clock",
+      "subtext": "Your cities, or convert a time: 3pm PST in Tokyo",
+      "script": "osascript -l JavaScript ./clock.js clock \"$1\""
+    },
+    {
+      "id": "sf_when",
+      "type": "scriptfilter",
+      "keyword": "{var:keyword_when}",
+      "title": "Meeting Planner",
+      "subtext": "Working hours across cities: London NYC Tokyo",
+      "script": "osascript -l JavaScript ./clock.js when \"$1\""
+    },
+    {
+      "id": "ua_convert",
+      "type": "universalaction",
+      "name": "Convert Time with World Clock",
+      "text": true
+    },
+    {
+      "id": "route",
+      "type": "conditional",
+      "conditions": [
+        {
+          "id": "fav",
+          "input": "",
+          "mode": 4,
+          "match": "^wcfav:",
+          "label": "Add or remove a city"
+        }
+      ],
+      "elselabel": "Copy",
+      "note": "Rows in the add screen carry a wcfav: action"
+    },
+    {
+      "id": "act",
+      "type": "script",
+      "script": "osascript -l JavaScript ./clock.js act \"$1\"",
+      "note": "Adds, removes or renames a city, then reopens the world clock"
+    },
+    {
+      "id": "copy",
+      "type": "clipboard",
+      "autopaste": false
+    },
+    {
+      "id": "paste",
+      "type": "clipboard",
+      "autopaste": true
+    }
+  ],
+  "connections": [
+    {
+      "from": "ua_convert",
+      "to": "sf_clock"
+    },
+    {
+      "from": "sf_clock",
+      "to": "route"
+    },
+    {
+      "from": "route",
+      "to": "act",
+      "output": "fav"
+    },
+    {
+      "from": "route",
+      "to": "copy"
+    },
+    {
+      "from": "sf_clock",
+      "to": "paste",
+      "mod": "cmd"
+    },
+    {
+      "from": "sf_clock",
+      "to": "copy",
+      "mod": "alt"
+    },
+    {
+      "from": "sf_clock",
+      "to": "copy",
+      "mod": "ctrl"
+    },
+    {
+      "from": "sf_clock",
+      "to": "act",
+      "mod": "shift"
+    },
+    {
+      "from": "sf_when",
+      "to": "copy"
+    },
+    {
+      "from": "sf_when",
+      "to": "paste",
+      "mod": "cmd"
+    },
+    {
+      "from": "sf_when",
+      "to": "copy",
+      "mod": "alt"
+    },
+    {
+      "from": "sf_when",
+      "to": "copy",
+      "mod": "ctrl"
+    }
+  ]
+}
