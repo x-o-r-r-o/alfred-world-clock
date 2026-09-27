@@ -107,7 +107,8 @@ function output(items) {
     for (const m of Object.values(it.mods || {})) m.subtitle = clean(m.subtitle);
   }
   const out = { skipknowledge: true, items: all };
-  if (RERUN) out.rerun = RERUN;
+  // Rerun only to keep a shown time current: a "Couldn’t find" screen would otherwise run every 5 s for nothing
+  if (RERUN && all.some((it) => it.valid !== false)) out.rerun = RERUN;
   return JSON.stringify(out, (k, v) => (typeof v === "string" ? wellFormed(v) : v));
 }
 
@@ -313,6 +314,22 @@ function relNow(ms) {
   if (Math.abs(diff) < MIN) return "now";
   return diff > 0 ? `in ${fmtSpan(diff)}` : `${fmtSpan(diff)} ago`;
 }
+// The length of the range being converted (3-5pm), or 0.
+let DUR = 0;
+// "15:00", or for a range "15:00–17:00", "3:00–5:00 PM", "11:00 PM–1:00 AM Tue"
+function fmtWhen(p, ms, startTag) {
+  const w = wall(p, ms), a = fmtTime(w);
+  if (!DUR) return a + (startTag || "");
+  const e = wall(p, ms + DUR), b = fmtTime(e);
+  // a weekday tag on the start (the place is on another day than you) moves to the end when both share the day
+  if (e.day !== w.day) return `${a}${startTag || ""}–${b} ${DOW[e.dow]}`;
+  if (H12 && a.slice(-2) === b.slice(-2)) return `${a.slice(0, -3)}–${b}${startTag || ""}`;
+  return `${a}–${b}${startTag || ""}`;
+}
+// ISO 8601, or an ISO 8601 interval for a range
+function isoWhen(p, ms) {
+  return DUR ? `${iso(p, ms)}/${iso(p, ms + DUR)}` : iso(p, ms);
+}
 function iso(p, ms) {
   const w = wall(p, ms);
   const off = w.off === 0 && p.zone === "UTC" ? "Z" : isoOffset(w.off);
@@ -516,7 +533,7 @@ const ABBRS = dict({
   ADT: [["Atlantic Daylight", "America/Halifax", -3]], AT: [["Atlantic", "America/Halifax", null]],
   NST: [["Newfoundland", "America/St_Johns", -3.5]], NDT: [["Newfoundland", "America/St_Johns", -2.5]],
   BST: [["British Summer", "Europe/London", 1], ["Bangladesh Standard", "Asia/Dhaka", 6, "BD"]],
-  IST: [["India Standard", "Asia/Kolkata", 5.5], ["Irish Standard", "Europe/Dublin", 1, "IE GB"], ["Israel Standard", "Asia/Jerusalem", 2, "IL PS"]],
+  IST: [["India Standard", "Asia/Kolkata", 5.5], ["Irish Standard", "Europe/Dublin", 1, "IE"], ["Israel Standard", "Asia/Jerusalem", 2, "IL PS"]],
   IDT: [["Israel Daylight", "Asia/Jerusalem", 3]], WET: [["Western European", "Europe/Lisbon", 0]], WEST: [["Western European Summer", "Europe/Lisbon", 1]],
   CET: [["Central European", "Europe/Paris", 1]], CEST: [["Central European Summer", "Europe/Paris", 2]],
   EET: [["Eastern European", "Europe/Athens", 2]], EEST: [["Eastern European Summer", "Europe/Athens", 3]],
@@ -594,7 +611,7 @@ function countryByName(key) {
 let LOCAL = null;
 function zonePlace(zone) {
   const zt = meta().zonetab[zone];
-  const name = zone === "UTC" ? "UTC" : zone.split("/").pop().replace(/_/g, " ");
+  const name = zone === "UTC" ? "UTC" : /^Etc\//.test(zone) ? zone : zone.split("/").pop().replace(/_/g, " ");
   return { kind: "zone", name: DISPLAY[name] || name, full: zone, zone, fixed: null, cc: zt ? zt[0] : "", lat: zt ? zt[1] : null, lon: zt ? zt[2] : null };
 }
 function localPlace() {
@@ -663,6 +680,9 @@ function resolvePhrase(phrase) {
     const z = knownZone(raw);
     if (z) return zonePlace(z);
   }
+  // Names macOS accepts but doesn't list: Etc/GMT+5 (POSIX sign: UTC−5), EST5EDT, PST8PDT
+  const posix = /^etc\/gmt([+\-]\d{1,2})$/i.exec(raw) ? `Etc/GMT${raw.slice(7)}` : /^[a-z]{3}\d[a-z]{3}$/i.test(raw) ? raw.toUpperCase() : null;
+  if (posix && zoneObj(posix)) return zonePlace(posix);
   const name = PLACE_ALIAS[key] || key;
   // A zone's own place (Chatham, Lord Howe, Kiritimati: population 0 in the data) wins over namesakes
   let rows = exactRows(name, 12);
@@ -832,6 +852,11 @@ function saveFavs(list) {
   return writeFile(favsPath(), JSON.stringify({ version: 1, cities: clean }, null, 1));
 }
 const FAVS = loadFavs();
+// A saved city in the Mac's time zone stands in for "here": Lahore rather than Karachi, or a label like “Home”.
+{
+  const home = FAVS.find((f) => f.zone && (f.zone === LOCAL.zone || LEGACY[f.zone] === LOCAL.zone));
+  if (home) LOCAL = Object.assign({}, home, { here: true });
+}
 
 function placeId(p) {
   return `${p.zone || `fixed${p.fixed}`}|${fold(p.name)}`;
@@ -866,7 +891,7 @@ function displayName(p) {
 function copyText(p, ms) {
   const w = wall(p, ms), a = abbrAt(p, ms);
   const where = a ? a : `in ${displayName(p)} (${fmtUtc(w.off)})`;
-  return `${fmtTime(w)} ${where}, ${fmtDay(w)}`;
+  return `${fmtWhen(p, ms)} ${where}, ${fmtDay(w)}`;
 }
 function copyAll(list, ms) {
   return list.map((p) => `${displayName(p)}: ${copyText(p, ms)}`).join("\n");
@@ -906,15 +931,15 @@ function timeRow(p, ms, ref, o) {
   const text = copyText(p, ms);
   const fav = isFav(p);
   const it = {
-    title: `${p.noFlag ? "" : flagOf(p.cc)}${name}  ${fmtTime(w)}${dayTag}`,
+    title: `${p.noFlag ? "" : flagOf(p.cc)}${name}  ${fmtWhen(p, ms, dayTag)}`,
     subtitle: parts.join(" · "),
     arg: text,
     icon: { path: `icons/${light}.png` },
-    text: { copy: text, largetype: `${displayName(p)}\n${fmtTime(w)}\n${fmtDay(w)}` },
+    text: { copy: text, largetype: `${displayName(p)}\n${fmtWhen(p, ms)}\n${fmtDay(w)}` },
     mods: {
       cmd: { arg: text, subtitle: `Paste “${text}”` },
       alt: { arg: o.all || text, subtitle: "Copy all cities" },
-      ctrl: { arg: iso(p, ms), subtitle: `Copy as ISO 8601: ${iso(p, ms)}` },
+      ctrl: { arg: isoWhen(p, ms), subtitle: `Copy as ISO 8601: ${isoWhen(p, ms)}` },
     },
   };
   if (!p.here || p.kind === "fav") {
@@ -943,6 +968,12 @@ function isDurationStart(tokens, i) {
 function extractTime(input) {
   const t = { rest: "", errors: [], explicit: false };
   let s = ` ${input} `;
+  const ampm = (h, ap) => {
+    if (!ap) return h;
+    if (h < 1 || h > 12) return -1;
+    const pm = ap[0].toLowerCase() === "p";
+    return (h % 12) + (pm ? 12 : 0);
+  };
   const take = (re, fn) => {
     s = s.replace(re, (...m) => {
       const r = fn(...m);
@@ -953,8 +984,29 @@ function extractTime(input) {
   take(/\s(\d{4})-(\d{1,2})-(\d{1,2})(?:[tT\s](\d{1,2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?\s*(Z|[+\-]\d{2}:?\d{2})?)?(?=\s)/, (m, y, mo, d, h, mi, sec, z) => {
     t.date = { y: +y, mo: +mo, d: +d };
     if (h != null) t.time = { h: +h, mi: +mi };
-    if (z) t.isoOffset = z.toUpperCase() === "Z" ? 0 : (z[0] === "-" ? -1 : 1) * (+z.slice(1, 3) * 3600 + +z.slice(-2) * 60);
+    if (z && z.toUpperCase() !== "Z" && (+z.slice(1, 3) > 14 || +z.slice(-2) > 59)) t.errors.push(z);
+    else if (z) t.isoOffset = z.toUpperCase() === "Z" ? 0 : (z[0] === "-" ? -1 : 1) * (+z.slice(1, 3) * 3600 + +z.slice(-2) * 60);
   });
+  // Unix timestamps in seconds or milliseconds: 1727000000, @1727000000, 1727000000000
+  take(/\s@?(\d{10}|\d{13})(?=\s)/, (m, n) => {
+    t.epoch = n.length === 13 ? +n : +n * 1000;
+  });
+  // Ranges: 3-5pm, 3pm–5pm, 15:00-17:30, 11–1pm (11 AM to 1 PM). Bare "9-5" isn't one (a date? a score?).
+  take(/\s(\d{1,2})(?:[:.h](\d{2}))?\s*(a\.?m\.?|p\.?m\.?|a|p)?\s*[\-–—]\s*(\d{1,2})(?:[:.h](\d{2}))?\s*(a\.?m\.?|p\.?m\.?|a|p)?(?=\s)/i,
+    (m, h1, m1, ap1, h2, m2, ap2) => {
+      if (!ap1 && !ap2 && (m1 == null || m2 == null)) return false;
+      let a = ampm(+h1, ap1 || ap2), b = ampm(+h2, ap2 || ap1);
+      // "11-1pm": the pm belongs to the end only
+      if (!ap1 && ap2 && a > b && a >= 0) a = ampm(+h1, /^p/i.test(ap2) ? "am" : "pm");
+      // "11pm-1": the end is 1 AM
+      else if (ap1 && !ap2 && b < a && b >= 0) b = ampm(+h2, /^p/i.test(ap1) ? "am" : "pm");
+      if (a < 0 || b < 0 || a > 23 || b > 23 || +(m1 || 0) > 59 || +(m2 || 0) > 59) {
+        t.errors.push(m.trim());
+        return;
+      }
+      t.time = { h: a, mi: +(m1 || 0) };
+      t.until = { h: b, mi: +(m2 || 0) };
+    });
   // in 2 hours, +90m, -1d, 3 days ago
   take(/\s(?:(in)\s+)?([+\-])?(\d+(?:\.\d+)?)\s*(hours?|hrs?|h|minutes?|mins?|m|days?|d|weeks?|wks?|w)(\s+ago)?(?=\s)/i, (m, inw, sign, n, unit, ago) => {
     if (!inw && !sign && !ago) return false;
@@ -983,7 +1035,7 @@ function extractTime(input) {
   // 10/5, 10/5/2026 (in the order of the Mac's region), 5.10. or 5.10.2026 (always day first)
   take(/\s(\d{1,2})\/(\d{1,2})(?:\/(\d{2}|\d{4}))?(?=\s)/, (m, a, b, y) => {
     const [mo, d] = MDY ? [+a, +b] : [+b, +a];
-    t.date = { mo, d, y: y ? (y.length === 2 ? 2000 + +y : +y) : null };
+    t.date = { mo, d, y: y ? (y.length === 2 ? (2000 + +y > THIS_YEAR + 50 ? 1900 : 2000) + +y : +y) : null };
   });
   take(/\s(\d{1,2})\.(\d{1,2})\.(\d{4})?(?=\s)/, (m, d, mo, y) => {
     t.date = { mo: +mo, d: +d, y: y ? +y : null };
@@ -991,13 +1043,11 @@ function extractTime(input) {
   take(/\s(noon|midday|midnight)(?=\s)/i, (m, w) => {
     t.time = { h: w.toLowerCase() === "midnight" ? 0 : 12, mi: 0 };
   });
-  // 3pm, 3 pm, 3:30pm, 3.30 p.m., 15:30, 9h30, 9h
-  const ampm = (h, ap) => {
-    if (!ap) return h;
-    if (h < 1 || h > 12) return -1;
-    const pm = ap[0].toLowerCase() === "p";
-    return (h % 12) + (pm ? 12 : 0);
-  };
+  // 3pm, 3 pm, 3:30pm, 3.30 p.m., 15:30, 9h30, 9h, 15 Uhr, 15.30 Uhr
+  take(/\s(\d{1,2})(?:[:.](\d{2}))?\s*uhr(?=\s)/i, (m, h, mi) => {
+    if (t.time || +h > 23 || +(mi || 0) > 59) return false;
+    t.time = { h: +h, mi: +(mi || 0) };
+  });
   take(/\s(\d{1,2})[:.h](\d{2})(?::\d{2})?\s*(a\.?m\.?|p\.?m\.?|a|p)?(?=\s)/i, (m, h, mi, ap) => {
     if (t.time) return false;
     const hh = ampm(+h, ap);
@@ -1029,7 +1079,7 @@ function extractTime(input) {
     t.time = { h: +n, mi: 0 };
   });
   if (t.tonight && !t.time) t.time = { h: 20, mi: 0 };
-  t.explicit = !!(t.time || t.date || t.weekday || t.rel);
+  t.explicit = !!(t.time || t.date || t.weekday || t.rel || t.epoch != null);
   t.any = t.explicit || t.now || t.delta != null;
   t.rest = s.replace(/\s(at|on|from|@)(?=\s)/gi, " ").replace(/\s+/g, " ").trim();
   return t;
@@ -1050,17 +1100,27 @@ function splitTargets(q) {
 }
 
 // When a phrase names a time: the instant, with notes about DST gaps and doubled hours.
+// Dates NSTimeZone and JavaScript handle well; beyond them "in 99999999 days" would print NaN.
+const MIN_MS = Date.UTC(1800, 0, 1), MAX_MS = Date.UTC(3000, 0, 1);
 function computeInstant(t, src) {
+  const r = instantFor(t, src);
+  if (!r.error && !(r.ms >= MIN_MS && r.ms < MAX_MS)) return { error: "range" };
+  return r;
+}
+function instantFor(t, src) {
   const notes = [];
+  if (t.epoch != null) return { ms: t.epoch + (t.delta || 0), notes, fixedSource: 0 };
   if (t.isoOffset != null && t.date && t.time) {
+    if (t.date.y < 1800) return { error: "range" };
     const ms = Date.UTC(t.date.y, t.date.mo - 1, t.date.d, t.time.h, t.time.mi) - t.isoOffset * 1000;
-    return { ms: ms + (t.delta || 0), notes, fixedSource: t.isoOffset };
+    return { ms: ms + (t.delta || 0), notes, fixedSource: t.isoOffset, dur: untilDur(t, t.time) };
   }
   if (!t.explicit) return { ms: NOW + (t.delta || 0), notes, live: true };
   const base = wall(src, NOW);
   let day = { y: base.y, mo: base.mo, d: base.d, dow: base.dow };
   if (t.date) {
-    const y = t.date.y || base.y;
+    const y = t.date.y != null ? t.date.y : base.y;
+    if (y < 1800 || y > 2999) return { error: "range" };
     if (t.date.mo < 1 || t.date.mo > 12 || t.date.d < 1 || t.date.d > 31) return { error: "date" };
     let chk = new Date(Date.UTC(y, t.date.mo - 1, t.date.d));
     if (chk.getUTCMonth() !== t.date.mo - 1) return { error: "date" };
@@ -1085,7 +1145,19 @@ function computeInstant(t, src) {
     notes.push(info(`${wanted} happens twice in ${displayName(src)} on ${fmtDay({ ...day })}`,
       `Clocks go back; showing the first (${zoneLabel(src, r.ms)}). The second is ${fmtSpan(r.second - r.ms)} later (${zoneLabel(src, r.second)})`, "warn"));
   }
-  return { ms: r.ms + (t.delta || 0), notes };
+  // a range's end in the same place's calendar, so a DST change inside it is counted
+  let dur = 0;
+  if (t.until) {
+    const ed = t.until.h * 60 + t.until.mi <= time.h * 60 + time.mi ? addDays(day.y, day.mo, day.d, 1) : day;
+    dur = wallToInstant(src, ed.y, ed.mo, ed.d, t.until.h, t.until.mi).ms - r.ms;
+  }
+  return { ms: r.ms + (t.delta || 0), notes, dur };
+}
+// The length of a range like 3-5pm (an end before the start is the next day), or 0.
+function untilDur(t, time) {
+  if (!t.until) return 0;
+  const d = ((t.until.h * 60 + t.until.mi - time.h * 60 - time.mi) % 1440 + 1440) % 1440;
+  return (d || 1440) * MIN;
 }
 
 // Rows offering the other meanings of an ambiguous place ("IST", "Portland", "USA").
@@ -1133,7 +1205,6 @@ function worldClock() {
 
 // Seconds until the next minute (Alfred allows 0.1–5).
 function liveRerun() {
-  if (env("WC_NOW", "")) return 1;
   const s = (MIN - (NOW % MIN)) / 1000 + 0.05;
   return Math.max(0.1, Math.min(5, Math.round(s * 10) / 10));
 }
@@ -1232,9 +1303,9 @@ function clockFilter(query) {
   if (right) {
     const tr = extractTime(right);
     if (tr.any || tr.errors.length) {
-      for (const k of ["date", "time", "weekday", "rel", "delta", "now", "isoOffset", "tonight"]) if (t[k] == null && tr[k] != null) t[k] = tr[k];
+      for (const k of ["date", "time", "until", "weekday", "rel", "delta", "now", "isoOffset", "tonight", "epoch"]) if (t[k] == null && tr[k] != null) t[k] = tr[k];
       t.errors.push(...tr.errors);
-      t.explicit = !!(t.time || t.date || t.weekday || t.rel);
+      t.explicit = !!(t.time || t.date || t.weekday || t.rel || t.epoch != null);
       t.any = t.explicit || t.now || t.delta != null;
       right = tr.rest;
     }
@@ -1280,7 +1351,9 @@ function clockFilter(query) {
     }
   }
   const r = computeInstant(t, src);
+  if (r.error === "range") return [info("Couldn’t convert a time that far away", "Dates from the year 1800 to 2999 work", "error")];
   if (r.error) return [info("Couldn’t read the date", "Try tomorrow, Friday, 5 Oct, Oct 5 or 2026-10-05", "error")];
+  DUR = r.dur || 0;
   if (r.fixedSource != null && !t.rest) src = offsetPlace(fmtUtc(r.fixedSource).replace("−", "-")) || Object.assign({}, LOCAL);
   if (r.fixedSource === 0 && !t.rest) src = abbrPlaces("UTC")[0];
   const ms = r.ms;
@@ -1314,7 +1387,7 @@ function clockFilter(query) {
   });
   const all = copyAll([src].concat(targets), ms);
   const rows = [];
-  const srcNote = relNow(ms);
+  const srcNote = relNow(ms) + (DUR ? ` · ${fmtSpan(DUR)} long` : "");
   rows.push(timeRow(src, ms, src, { all, source: srcNote, then: true }));
   const sn = strictNote(src, ms, q);
   if (sn) rows.push(sn);
@@ -1370,8 +1443,9 @@ function whenFilter(query) {
     const r = computeInstant(Object.assign({}, t, { time: { h: 0, mi: 0 } }), LOCAL);
     if (r.error) return [info("Couldn’t read the date", "Try tomorrow, Friday, 5 Oct or 2026-10-05", "error")];
     start = r.ms;
-  } else if (t.time) {
+  } else if (t.time || t.epoch != null) {
     const r = computeInstant(t, LOCAL);
+    if (r.error) return [info("Couldn’t read the date", "Try tomorrow, Friday, 5 Oct or 2026-10-05", "error")];
     start = r.ms;
   } else start = NOW - (lw.mi * MIN) - ((NOW % MIN));
   const slots = [];

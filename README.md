@@ -21,7 +21,7 @@ Type a city, country, state, time zone abbreviation (`CET`), time zone name (`Am
 
 ### Converting times
 
-Type a time with a place to convert it via the `clock` keyword, like `3pm PST in Tokyo`, `tomorrow 9:00 London to NYC`, `noon here in Berlin`, `now in Sydney`, `5pm PT Shanghai Zurich` or just `14:30 CET` to see it in all your cities. Times can be written as `3pm`, `15:30`, `1530`, `noon` or `midnight`, dates as `tomorrow`, `Friday`, `5 Oct`, `Oct 5` or `2026-10-05`, and `in 2 hours` works too.
+Type a time with a place to convert it via the `clock` keyword, like `3pm PST in Tokyo`, `tomorrow 9:00 London to NYC`, `noon here in Berlin`, `now in Sydney`, `5pm PT Shanghai Zurich` or just `14:30 CET` to see it in all your cities. Times can be written as `3pm`, `15:30`, `1530`, `noon` or `midnight`, ranges as `3-5pm` or `15:00-17:30`, and dates as `tomorrow`, `Friday`, `5 Oct`, `Oct 5` or `2026-10-05`. `in 2 hours` and Unix timestamps like `1727000000` work too.
 
 ![Converting a time](images/convert.png)
 
@@ -31,7 +31,7 @@ When an abbreviation has several meanings, like `CST`, `IST` or `BST`, the most 
 
 ### Adding cities
 
-Manage your cities via the `clock` keyword followed by `add`. Type a name and press <kbd>↩</kbd> to add it, or add ` as Name` to give it a label, like `clock add Chatham as Kiwi office`. Press <kbd>↩</kbd> on a city already in your world clock to remove it.
+Manage your cities via the `clock` keyword followed by `add`. Type a name and press <kbd>↩</kbd> to add it, or add ` as Name` to give it a label, like `clock add Chatham as Kiwi office`. Press <kbd>↩</kbd> on a city already in your world clock to remove it. A saved city in your Mac’s time zone becomes your own row, so `clock add Lahore as Home` shows “Home (Lahore)” instead of Karachi.
 
 ![Adding a city](images/add.png)
 
@@ -52,7 +52,7 @@ Alternatively, convert a selected time like “3pm EST” via the Universal Acti
 
 Keywords, the time and date format, the order of cities, working hours and flags can be changed in the Workflow’s Configuration.
 
-City data comes from [GeoNames](https://www.geonames.org), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+City data is adapted from [GeoNames](https://www.geonames.org) and licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). It was trimmed to the names, places and columns the workflow needs, and is provided as is, without warranty. The details are in `data/ATTRIBUTION.txt` in the workflow’s folder.
 
 ## Development
 

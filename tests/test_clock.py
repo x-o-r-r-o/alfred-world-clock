@@ -18,7 +18,7 @@ BASE_ENV = {
 
 
 def data_dir(name="default"):
-    d = os.path.join(TMP, name, "Application Support", "Alfred", "Workflow Data", "io.github.x-o-r-r-o.worldclock")
+    d = os.path.join(TMP, name, "Application Support", "Alfred", "Workflow Data", "io.github.x-o-r-r-o.world-clock")
     return d
 
 
@@ -490,8 +490,31 @@ class AddTests(unittest.TestCase):
         self.assertFalse(os.path.exists(os.path.join(d, "cities.json")))
 
     def test_here_cannot_be_added(self):
-        its = items("clock", data=fresh("add5"))
+        # no saved city in Asia/Karachi: the here row is the zone itself, which can't be added
+        its = items("clock", data=fresh("add5"), WC_TZ="Asia/Karachi")
+        self.assertTrue(its[0]["title"].startswith("🇵🇰 Karachi (here)"))
         self.assertIs(its[0]["mods"]["shift"].get("valid"), False)
+
+    def test_saved_city_in_local_zone_is_here(self):
+        # independent audit: a saved Lahore (labelled Home) stands in for Karachi, the zone's namesake
+        d = fresh("add6")
+        save(d, [{"name": "Lahore", "cc": "PK", "zone": "Asia/Karachi", "lat": 31.55, "lon": 74.34, "label": "Home"},
+                 {"name": "Tokyo", "cc": "JP", "zone": "Asia/Tokyo"}])
+        its = items("clock", data=d, WC_TZ="Asia/Karachi")
+        self.assertTrue(its[0]["title"].startswith("🇵🇰 Home (Lahore) (here)  17:00"), its[0]["title"])
+        self.assertEqual(len(its), 2)
+        self.assertIn('"op":"remove"', its[0]["mods"]["shift"]["arg"])
+        self.assertTrue(its[0]["mods"]["alt"]["arg"].startswith("Home: 17:00 PKT"))
+        # the converter and planner use it as "here" too
+        its = items("clock", "noon here in Tokyo", data=d, WC_TZ="Asia/Karachi")
+        self.assertTrue(its[0]["title"].startswith("🇵🇰 Home (Lahore) (here)  12:00"))
+        its = items("when", "Tokyo", data=d, WC_TZ="Asia/Karachi")
+        self.assertIn("Home", its[1]["title"])
+        # Asia/Calcutta (older name) and Asia/Kolkata are the same zone
+        d = fresh("add7")
+        save(d, [{"name": "Pune", "cc": "IN", "zone": "Asia/Kolkata"}])
+        its = items("clock", data=d, WC_TZ="Asia/Calcutta")
+        self.assertTrue(its[0]["title"].startswith("🇮🇳 Pune (here)"), its[0]["title"])
 
 
 class PlannerTests(unittest.TestCase):
@@ -621,6 +644,74 @@ class BuildTests(unittest.TestCase):
             self.assertNotEqual(data["items"][0]["title"].split("  ")[0], "Couldn’t find", w)
             self.assertIn(make_cities.fold(w), open(os.path.join(SRC, "data", "cities.tsv"), encoding="utf-8").read())
 
+
+class IndependentAuditTests(unittest.TestCase):
+    def conv(self, q, **kw):
+        return items("clock", q, data=kw.pop("data", fresh("audit")), **kw)
+
+    def test_time_ranges(self):
+        # raycast/extensions#28346: convert "5-7pm" style ranges
+        its = self.conv("3-5pm in Tokyo", WC_LOCALE="en_US")
+        self.assertTrue(its[0]["title"].endswith("London (here)  3:00–5:00 PM"), its[0]["title"])
+        self.assertIn("2 h long", its[0]["subtitle"])
+        tokyo = find(its, "Tokyo")
+        self.assertEqual(tokyo["title"], "🇯🇵 Tokyo  11:00 PM–1:00 AM Tue")
+        self.assertEqual(tokyo["arg"], "11:00 PM–1:00 AM Tue JST, Mon Sep 28")
+        self.assertEqual(tokyo["mods"]["ctrl"]["arg"], "2026-09-28T23:00:00+09:00/2026-09-29T01:00:00+09:00")
+        # 11-1pm is 11 AM to 1 PM; 11pm-1 ends at 1 AM; 24-hour ranges need minutes on both sides
+        self.assertEqual(find(self.conv("11-1pm New York to London"), "London")["title"], "🇬🇧 London  16:00–18:00")
+        self.assertEqual(find(self.conv("11pm-1 Tokyo"), "London")["title"], "🇬🇧 London (here)  15:00–17:00")
+        self.assertEqual(find(self.conv("15:00–17:30 London to NYC"), "New York")["title"], "🇺🇸 New York  10:00–12:30")
+        self.assertTrue(self.conv("9-5")[0]["title"].startswith("Couldn’t find"))
+        # a range across the end of DST is measured in real time: 1-3am on 1 Nov in New York is 3 hours
+        its = self.conv("1-3am 1 Nov New York to London")
+        self.assertIn("3 h long", its[0]["subtitle"])
+        self.assertEqual(find(its, "London")["arg"], "05:00–08:00 GMT, Sun 1 Nov")
+        self.assertEqual(self.conv("13-15pm")[0]["title"], "Couldn’t read the time “13-15pm”")
+
+    def test_unix_timestamps(self):
+        its = self.conv("1727000000 in Tokyo")
+        self.assertEqual(its[0]["title"], "UTC  10:13")
+        self.assertEqual(find(its, "Tokyo")["arg"], "19:13 JST, Sun 22 Sep 2024")
+        self.assertEqual(find(self.conv("@1727000000000"), "Tokyo")["arg"], "19:13 JST, Sun 22 Sep 2024")
+
+    def test_out_of_range_and_bad_offsets(self):
+        for q in ["in 99999999 days", "0000-01-01", "1/1/1700", "9999-12-31 23:59"]:
+            self.assertEqual(self.conv(q)[0]["title"], "Couldn’t convert a time that far away", q)
+        self.assertEqual(self.conv("2026-10-05T14:00+99:99")[0]["title"], "Couldn’t read the time “+99:99”")
+        self.assertNotIn("NaN", json.dumps(self.conv("in 99999 weeks")))
+        # two-digit years: the nearest century
+        self.assertIn("1 Jan 1999", self.conv("1/1/99")[0]["subtitle"])
+        self.assertIn("1 Jan 2030", self.conv("1/1/30")[0]["subtitle"])
+        its = items("when", "London Tokyo 3pm in 99999999 days", data=fresh("audit"))
+        self.assertTrue(its)
+
+    def test_posix_zone_names(self):
+        its = self.conv("Etc/GMT+5")
+        self.assertEqual(its[0]["title"], "Etc/GMT+5  07:00")
+        self.assertIn("UTC−5", its[0]["subtitle"])
+        self.assertIn("UTC+14", self.conv("etc/gmt-14")[0]["subtitle"])
+        self.assertTrue(self.conv("EST5EDT")[0]["title"].startswith("EST5EDT  08:00"))
+
+    def test_ist_in_britain_is_india(self):
+        its = self.conv("noon IST to UTC")
+        self.assertIn("India", its[0]["title"])
+
+    def test_german_uhr(self):
+        self.assertEqual(self.conv("15 Uhr Berlin")[0]["title"], "🇩🇪 Berlin  15:00")
+        self.assertEqual(find(self.conv("15.30 Uhr in Tokyo"), "Tokyo")["arg"], "23:30 JST, Mon 28 Sep")
+
+    def test_rerun_only_for_live_times(self):
+        # a "Couldn’t find" screen doesn't rerun every 5 seconds
+        self.assertNotIn("rerun", sf("clock", "xyzzyq", data=fresh("audit")))
+        self.assertNotIn("rerun", sf("clock", "3pm Tokyo", data=fresh("audit")))
+        self.assertIn("rerun", sf("clock", "Tokyo", data=fresh("audit")))
+        self.assertIn("rerun", sf("clock", "", data=fresh("audit")))
+
+    def test_rerun_interval(self):
+        # one run per 5 s at most (Alfred's limit), and the last lands just after the minute changes
+        for now, want in [("2026-09-28T12:00:58.500Z", 1.6), ("2026-09-28T12:00:59.990Z", 0.1), ("2026-09-28T12:00:10Z", 5)]:
+            self.assertEqual(sf("clock", "", data=fresh("audit"), WC_NOW=now)["rerun"], want, now)
 
 if __name__ == "__main__":
     unittest.main(verbosity=1)

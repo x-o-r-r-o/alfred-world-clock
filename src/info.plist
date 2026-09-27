@@ -3,84 +3,28 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>io.github.x-o-r-r-o.worldclock</string>
+	<string>io.github.x-o-r-r-o.world-clock</string>
 	<key>category</key>
 	<string>Productivity</string>
 	<key>connections</key>
 	<dict>
-		<key>0AC90C2A-5BFB-52A7-B044-9304F8727B2D</key>
+		<key>3DE0A4A1-E1BB-5AB1-9473-2AD75265DB25</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>91920400-12F9-5A4C-B650-0EDC619ED6E0</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>174ECFEC-2603-554F-9AEC-775F5ED9151F</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>425CE488-3668-5262-A472-7305460D755F</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
-				<string>B03A37EA-672C-5254-AD70-45161CF324B8</string>
-				<key>modifiers</key>
-				<integer>1048576</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
-				<string>425CE488-3668-5262-A472-7305460D755F</string>
-				<key>modifiers</key>
-				<integer>524288</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-			<dict>
-				<key>destinationuid</key>
-				<string>425CE488-3668-5262-A472-7305460D755F</string>
-				<key>modifiers</key>
-				<integer>262144</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
-		<key>8AF77B0D-B6BE-5DC9-A835-564560DB3768</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>66EC909B-2DE1-59D6-B00D-45E28E486396</string>
+				<string>DA17E027-4594-5A7D-808E-15691A9E95E3</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
 				<key>sourceoutputuid</key>
-				<string>AACC1BF9-86AD-5143-A3D3-B3B681033321</string>
+				<string>97C8DCF3-B6E3-5CEC-B618-A01F23CD4DBC</string>
 				<key>vitoclose</key>
 				<false/>
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>425CE488-3668-5262-A472-7305460D755F</string>
+				<string>7D7BA4A7-E12A-5A2B-B752-CB107C64E689</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -89,11 +33,11 @@
 				<false/>
 			</dict>
 		</array>
-		<key>91920400-12F9-5A4C-B650-0EDC619ED6E0</key>
+		<key>88C31A7E-81D7-5B0D-86FF-3CDFEF425D0B</key>
 		<array>
 			<dict>
 				<key>destinationuid</key>
-				<string>8AF77B0D-B6BE-5DC9-A835-564560DB3768</string>
+				<string>7D7BA4A7-E12A-5A2B-B752-CB107C64E689</string>
 				<key>modifiers</key>
 				<integer>0</integer>
 				<key>modifiersubtext</key>
@@ -103,7 +47,7 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>B03A37EA-672C-5254-AD70-45161CF324B8</string>
+				<string>9E420A3A-E96F-50A2-9F54-5743111E0C90</string>
 				<key>modifiers</key>
 				<integer>1048576</integer>
 				<key>modifiersubtext</key>
@@ -113,7 +57,7 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>425CE488-3668-5262-A472-7305460D755F</string>
+				<string>7D7BA4A7-E12A-5A2B-B752-CB107C64E689</string>
 				<key>modifiers</key>
 				<integer>524288</integer>
 				<key>modifiersubtext</key>
@@ -123,7 +67,50 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>425CE488-3668-5262-A472-7305460D755F</string>
+				<string>7D7BA4A7-E12A-5A2B-B752-CB107C64E689</string>
+				<key>modifiers</key>
+				<integer>262144</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>B128AC07-0929-5C6A-A222-19FD7A9820DD</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>3DE0A4A1-E1BB-5AB1-9473-2AD75265DB25</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>9E420A3A-E96F-50A2-9F54-5743111E0C90</string>
+				<key>modifiers</key>
+				<integer>1048576</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>7D7BA4A7-E12A-5A2B-B752-CB107C64E689</string>
+				<key>modifiers</key>
+				<integer>524288</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+			<dict>
+				<key>destinationuid</key>
+				<string>7D7BA4A7-E12A-5A2B-B752-CB107C64E689</string>
 				<key>modifiers</key>
 				<integer>262144</integer>
 				<key>modifiersubtext</key>
@@ -133,9 +120,22 @@
 			</dict>
 			<dict>
 				<key>destinationuid</key>
-				<string>66EC909B-2DE1-59D6-B00D-45E28E486396</string>
+				<string>DA17E027-4594-5A7D-808E-15691A9E95E3</string>
 				<key>modifiers</key>
 				<integer>131072</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>D7FDBEFE-559F-57FE-A810-5F811F826735</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>B128AC07-0929-5C6A-A222-19FD7A9820DD</string>
+				<key>modifiers</key>
+				<integer>0</integer>
 				<key>modifiersubtext</key>
 				<string></string>
 				<key>vitoclose</key>
@@ -200,7 +200,7 @@
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
-			<string>91920400-12F9-5A4C-B650-0EDC619ED6E0</string>
+			<string>B128AC07-0929-5C6A-A222-19FD7A9820DD</string>
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
@@ -251,7 +251,7 @@
 			<key>type</key>
 			<string>alfred.workflow.input.scriptfilter</string>
 			<key>uid</key>
-			<string>174ECFEC-2603-554F-9AEC-775F5ED9151F</string>
+			<string>88C31A7E-81D7-5B0D-86FF-3CDFEF425D0B</string>
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
@@ -272,7 +272,7 @@
 			<key>type</key>
 			<string>alfred.workflow.trigger.universalaction</string>
 			<key>uid</key>
-			<string>0AC90C2A-5BFB-52A7-B044-9304F8727B2D</string>
+			<string>D7FDBEFE-559F-57FE-A810-5F811F826735</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -293,7 +293,7 @@
 						<key>outputlabel</key>
 						<string>Add or remove a city</string>
 						<key>uid</key>
-						<string>AACC1BF9-86AD-5143-A3D3-B3B681033321</string>
+						<string>97C8DCF3-B6E3-5CEC-B618-A01F23CD4DBC</string>
 					</dict>
 				</array>
 				<key>elselabel</key>
@@ -304,7 +304,7 @@
 			<key>type</key>
 			<string>alfred.workflow.utility.conditional</string>
 			<key>uid</key>
-			<string>8AF77B0D-B6BE-5DC9-A835-564560DB3768</string>
+			<string>3DE0A4A1-E1BB-5AB1-9473-2AD75265DB25</string>
 			<key>version</key>
 			<integer>1</integer>
 		</dict>
@@ -327,7 +327,7 @@
 			<key>type</key>
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
-			<string>66EC909B-2DE1-59D6-B00D-45E28E486396</string>
+			<string>DA17E027-4594-5A7D-808E-15691A9E95E3</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
@@ -346,7 +346,7 @@
 			<key>type</key>
 			<string>alfred.workflow.output.clipboard</string>
 			<key>uid</key>
-			<string>425CE488-3668-5262-A472-7305460D755F</string>
+			<string>7D7BA4A7-E12A-5A2B-B752-CB107C64E689</string>
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
@@ -365,7 +365,7 @@
 			<key>type</key>
 			<string>alfred.workflow.output.clipboard</string>
 			<key>uid</key>
-			<string>B03A37EA-672C-5254-AD70-45161CF324B8</string>
+			<string>9E420A3A-E96F-50A2-9F54-5743111E0C90</string>
 			<key>version</key>
 			<integer>3</integer>
 		</dict>
@@ -386,13 +386,13 @@ Type a city, country, state, time zone abbreviation (`CET`), time zone name (`Am
 
 ### Converting times
 
-Type a time with a place to convert it via the `clock` keyword, like `3pm PST in Tokyo`, `tomorrow 9:00 London to NYC`, `noon here in Berlin`, `now in Sydney`, `5pm PT Shanghai Zurich` or just `14:30 CET` to see it in all your cities. Times can be written as `3pm`, `15:30`, `1530`, `noon` or `midnight`, dates as `tomorrow`, `Friday`, `5 Oct`, `Oct 5` or `2026-10-05`, and `in 2 hours` works too.
+Type a time with a place to convert it via the `clock` keyword, like `3pm PST in Tokyo`, `tomorrow 9:00 London to NYC`, `noon here in Berlin`, `now in Sydney`, `5pm PT Shanghai Zurich` or just `14:30 CET` to see it in all your cities. Times can be written as `3pm`, `15:30`, `1530`, `noon` or `midnight`, ranges as `3-5pm` or `15:00-17:30`, and dates as `tomorrow`, `Friday`, `5 Oct`, `Oct 5` or `2026-10-05`. `in 2 hours` and Unix timestamps like `1727000000` work too.
 
 When an abbreviation has several meanings, like `CST`, `IST` or `BST`, the most likely one for your region is used and the others are offered below: press &lt;kbd&gt;↩&lt;/kbd&gt; on one to switch. When a typed time falls in a daylight saving change (it is skipped or happens twice), or an abbreviation like `EST` doesn’t match the season, a note explains what is shown.
 
 ### Adding cities
 
-Manage your cities via the `clock` keyword followed by `add`. Type a name and press &lt;kbd&gt;↩&lt;/kbd&gt; to add it, or add ` as Name` to give it a label, like `clock add Chatham as Kiwi office`. Press &lt;kbd&gt;↩&lt;/kbd&gt; on a city already in your world clock to remove it.
+Manage your cities via the `clock` keyword followed by `add`. Type a name and press &lt;kbd&gt;↩&lt;/kbd&gt; to add it, or add ` as Name` to give it a label, like `clock add Chatham as Kiwi office`. Press &lt;kbd&gt;↩&lt;/kbd&gt; on a city already in your world clock to remove it. A saved city in your Mac’s time zone becomes your own row, so `clock add Lahore as Home` shows “Home (Lahore)” instead of Karachi.
 
 ### Meeting planner
 
@@ -407,41 +407,11 @@ Alternatively, convert a selected time like “3pm EST” via the Universal Acti
 
 Keywords, the time and date format, the order of cities, working hours and flags can be changed in the Workflow’s Configuration.
 
-City data comes from [GeoNames](https://www.geonames.org), licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+City data is adapted from [GeoNames](https://www.geonames.org) and licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). It was trimmed to the names, places and columns the workflow needs, and is provided as is, without warranty. The details are in `data/ATTRIBUTION.txt` in the workflow’s folder.
 </string>
 	<key>uidata</key>
 	<dict>
-		<key>0AC90C2A-5BFB-52A7-B044-9304F8727B2D</key>
-		<dict>
-			<key>xpos</key>
-			<integer>30</integer>
-			<key>ypos</key>
-			<integer>150</integer>
-		</dict>
-		<key>174ECFEC-2603-554F-9AEC-775F5ED9151F</key>
-		<dict>
-			<key>xpos</key>
-			<integer>30</integer>
-			<key>ypos</key>
-			<integer>20</integer>
-		</dict>
-		<key>425CE488-3668-5262-A472-7305460D755F</key>
-		<dict>
-			<key>xpos</key>
-			<integer>690</integer>
-			<key>ypos</key>
-			<integer>150</integer>
-		</dict>
-		<key>66EC909B-2DE1-59D6-B00D-45E28E486396</key>
-		<dict>
-			<key>note</key>
-			<string>Adds, removes or renames a city, then reopens the world clock</string>
-			<key>xpos</key>
-			<integer>690</integer>
-			<key>ypos</key>
-			<integer>20</integer>
-		</dict>
-		<key>8AF77B0D-B6BE-5DC9-A835-564560DB3768</key>
+		<key>3DE0A4A1-E1BB-5AB1-9473-2AD75265DB25</key>
 		<dict>
 			<key>note</key>
 			<string>Rows in the add screen carry a wcfav: action</string>
@@ -450,19 +420,49 @@ City data comes from [GeoNames](https://www.geonames.org), licensed under [CC BY
 			<key>ypos</key>
 			<integer>20</integer>
 		</dict>
-		<key>91920400-12F9-5A4C-B650-0EDC619ED6E0</key>
+		<key>7D7BA4A7-E12A-5A2B-B752-CB107C64E689</key>
+		<dict>
+			<key>xpos</key>
+			<integer>690</integer>
+			<key>ypos</key>
+			<integer>150</integer>
+		</dict>
+		<key>88C31A7E-81D7-5B0D-86FF-3CDFEF425D0B</key>
+		<dict>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>20</integer>
+		</dict>
+		<key>9E420A3A-E96F-50A2-9F54-5743111E0C90</key>
+		<dict>
+			<key>xpos</key>
+			<integer>470</integer>
+			<key>ypos</key>
+			<integer>150</integer>
+		</dict>
+		<key>B128AC07-0929-5C6A-A222-19FD7A9820DD</key>
 		<dict>
 			<key>xpos</key>
 			<integer>250</integer>
 			<key>ypos</key>
 			<integer>20</integer>
 		</dict>
-		<key>B03A37EA-672C-5254-AD70-45161CF324B8</key>
+		<key>D7FDBEFE-559F-57FE-A810-5F811F826735</key>
 		<dict>
 			<key>xpos</key>
-			<integer>470</integer>
+			<integer>30</integer>
 			<key>ypos</key>
 			<integer>150</integer>
+		</dict>
+		<key>DA17E027-4594-5A7D-808E-15691A9E95E3</key>
+		<dict>
+			<key>note</key>
+			<string>Adds, removes or renames a city, then reopens the world clock</string>
+			<key>xpos</key>
+			<integer>690</integer>
+			<key>ypos</key>
+			<integer>20</integer>
 		</dict>
 	</dict>
 	<key>userconfigurationconfig</key>
