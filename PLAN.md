@@ -48,17 +48,17 @@ What their users ask for (raycast/extensions issues): UTC and Anywhere on Earth 
 - The planner assumes a Monday–Friday week except for a small table of countries with other weekends.
 
 ## Verify in real Alfred
-- [ ] Rerun keeps the selected row while the minute ticks (uids mask digits); “clock xyzzy” doesn’t rerun
-- [ ] Ranges: `clock 3-5pm in Tokyo` title fits; ⌃↩ copies the ISO interval
-- [ ] A saved city in the Mac’s zone replaces the here row; ⇧↩ on it removes it and the zone’s city comes back
-- [ ] About panel shows the GeoNames attribution paragraph with working links
-- [ ] ⇧↩ add/remove and `clock add` ↩ go through the conditional to the action; Alfred reopens with `clock `
-- [ ] ⌃↩ copies the ISO timestamp; ⌥↩ copies all cities; ⌘↩ pastes
-- [ ] Autocomplete rows (ambiguous abbreviation, “use UTC−5 exactly”) replace the query and keep the keyword
-- [ ] The Universal Action passes selected text like “3pm EST” to the converter
-- [ ] Flag emoji render in titles; the ●◐○ marks line up well enough in the planner
-- [ ] Workflow Configuration: keywords, time/date format, order, working hours, flags
-- [ ] Screenshots for every `images/*.png` in the README
+- [x] Rerun keeps the selected row while the minute ticks (uids mask digits); “clock xyzzy” doesn’t rerun (the latter checked by the test suite)
+- [x] Ranges: `clock 3-5pm in Tokyo` title fits; ⌃↩ copies the ISO interval
+- [x] A saved city in the Mac’s zone replaces the here row; ⇧↩ on it removes it and the zone’s city comes back
+- [ ] About panel shows the GeoNames attribution paragraph with working links (the paragraph is in info.plist’s readme; the panel itself not opened)
+- [x] ⇧↩ add/remove and `clock add` ↩ go through the conditional to the action; Alfred reopens with `clock `
+- [x] ⌃↩ copies the ISO timestamp; ⌥↩ copies all cities; ⌘↩ pastes
+- [x] Autocomplete rows (ambiguous abbreviation, “use UTC−5 exactly”) replace the query and keep the keyword
+- [x] The Universal Action passes selected text like “3pm EST” to the converter
+- [x] Flag emoji render in titles; the ●◐○ marks line up well enough in the planner
+- [ ] Workflow Configuration: keywords, time/date format, order, working hours, flags (keyword, 24-hour and flags off checked via Alfred’s `set configuration`; the Configuration sheet itself not opened)
+- [x] Screenshots for every `images/*.png` in the README
 
 ## Release checklist
 - [x] README `## Usage`, “via the `kw` keyword”, `<kbd>` lists, Workflow’s Configuration, screenshot placeholders, `## Development`, `## AI disclosure`

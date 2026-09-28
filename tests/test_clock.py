@@ -713,5 +713,12 @@ class IndependentAuditTests(unittest.TestCase):
         for now, want in [("2026-09-28T12:00:58.500Z", 1.6), ("2026-09-28T12:00:59.990Z", 0.1), ("2026-09-28T12:00:10Z", 5)]:
             self.assertEqual(sf("clock", "", data=fresh("audit"), WC_NOW=now)["rerun"], want, now)
 
+    def test_same_offset_reads_as(self):
+        # real-Alfred finding: "same time from Dublin" read oddly; a zero difference says "as"
+        subs = [i["subtitle"] for i in items("clock", "3pm Europe/Dublin", data=fresh("audit"))]
+        self.assertTrue(any("same time as Dublin" in s for s in subs), subs)
+        self.assertFalse(any("same time from" in s for s in subs), subs)
+        self.assertTrue(any("from Dublin" in s and "same time" not in s for s in subs), subs)
+
 if __name__ == "__main__":
     unittest.main(verbosity=1)

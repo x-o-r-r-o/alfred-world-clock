@@ -920,7 +920,7 @@ function timeRow(p, ms, ref, o) {
   const rd = relDay(w);
   const parts = [fmtDay(w) + (rd && (rd !== "today" || o.source) ? ` (${rd})` : "")];
   if (o.source) parts.push(o.source);
-  else if (!(p.here && ref === LOCAL)) parts.push(`${fmtDiff(w.off - rw.off)}${ref === LOCAL ? "" : ` from ${displayName(ref)}`}`);
+  else if (!(p.here && ref === LOCAL)) parts.push(`${fmtDiff(w.off - rw.off)}${ref === LOCAL ? "" : ` ${w.off === rw.off ? "as" : "from"} ${displayName(ref)}`}`);
   parts.push(zoneLabel(p, ms));
   if (o.then && p.fixed == null && offsetAt(p, NOW) !== w.off) {
     parts.push(`${abbrAt(p, ms) || fmtUtc(w.off)} then, ${abbrAt(p, NOW) || fmtUtc(offsetAt(p, NOW))} now`);
